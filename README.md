@@ -1,160 +1,135 @@
-# Turborepo starter
+# DSA Sheet Manager
 
-This Turborepo starter is maintained by the Turborepo core team.
+DSA Sheet Manager is a full-stack app for organizing data-structures-and-algorithms practice. Create sheets and topic folders, track solved problems, save notes and resources, write custom questions, and use the built-in code editor.
 
-## Using this example
+## Features
 
-Run the following command:
+- Register and log in with JWT-based authentication.
+- Organize practice using personal sheets and nested folders.
+- Add questions from LeetCode, GeeksforGeeks, or other platforms with difficulty, notes, and resource links.
+- Track solved questions and per-folder progress.
+- Pick a random question from the selected folder.
+- Create custom questions with a problem statement and sample inputs/outputs.
+- Write and manage reusable code snippets in the Monaco editor.
+- Submit code to an optional Judge0 service for execution.
+- Automatically add a **Popular DSA Questions** starter sheet for each account. It includes 25 LeetCode and GeeksforGeeks links grouped into 8 topic folders. Existing local accounts can be seeded with the command below.
 
-```sh
-npx create-turbo@latest
+## Project structure
+
+```text
+apps/
+  http-server/       Express API and MongoDB-backed services
+  react-app/         React + Vite frontend
+packages/
+  database/          Mongoose models and MongoDB connection
+  types/             Shared API and data types
+  eslint-config/     Shared ESLint configurations
+  typescript-config/ Shared TypeScript configurations
 ```
 
-## What's inside?
+## Technology
 
-This Turborepo includes the following packages/apps:
+| Area | Technologies |
+|---|---|
+| Frontend | React 18, TypeScript, Vite 8, React Router, Recoil, Tailwind CSS |
+| Editor and UI | Monaco Editor, TipTap, Framer Motion, Lucide React |
+| API | Node.js, Express 5, TypeScript, Axios, CORS |
+| Database | MongoDB, Mongoose |
+| Authentication | bcrypt password hashing, JSON Web Tokens, Nodemailer/SendGrid OTP email |
+| Code execution | Judge0 API (optional) |
+| Monorepo and tooling | npm workspaces, Turborepo, ESLint, Prettier |
 
-### Apps and Packages
+## Prerequisites
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- Node.js 20.19 or later (Node.js 22 recommended)
+- npm
+- MongoDB installed and running locally
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+On Windows, start the MongoDB service from PowerShell:
 
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo build
+```powershell
+net start MongoDB
 ```
 
-Without global `turbo`, use your package manager:
+The app connects to `mongodb://localhost:27017/dsa-sheet`. MongoDB creates the database and collections when the app first writes data.
 
-```sh
-cd my-turborepo
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+## Local configuration
+
+Create `apps/http-server/.env`:
+
+```env
+PORT=3002
+MONGO_URI=mongodb://localhost:27017/dsa-sheet
+JWT_SECRET=replace-with-a-long-random-secret
+SENDGRID_API_KEY=
+SENDGRID_EMAIL=
+JUDGE0_URL=http://localhost:2358
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Create `apps/react-app/.env`:
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo build --filter=docs
+```env
+VITE_BACKEND_URL=http://localhost:3002
 ```
 
-Without global `turbo`:
+Port `3002` is used in this local setup because another application is using `3001`. If you change the API port, update `VITE_BACKEND_URL` to match and restart Vite.
 
-```sh
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+SendGrid credentials and a verified sender are needed to deliver verification emails. Judge0 is not bundled with this project; configure `JUDGE0_URL` to a reachable Judge0 instance to enable code execution.
+
+## Install and run
+
+Install dependencies once from the repository root:
+
+```powershell
+npm ci
 ```
 
-### Develop
+Start the API in one terminal:
 
-To develop all apps and packages, run the following command:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo dev
+```powershell
+cd apps/http-server
+npm run dev
 ```
 
-Without global `turbo`, use your package manager:
+Start the frontend in a second terminal:
 
-```sh
-cd my-turborepo
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+```powershell
+cd apps/react-app
+npx vite --port 5173
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Open [http://localhost:5173](http://localhost:5173).
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+## Starter data
 
-```sh
-turbo dev --filter=web
+Newly registered accounts receive the starter DSA sheet automatically. To add it to all existing accounts in the configured local database, run from the repository root:
+
+```powershell
+npm run seed --workspace=http-server
 ```
 
-Without global `turbo`:
+Seeding is safe to rerun: existing starter sheets, folders, question links, and progress are preserved.
 
-```sh
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+## Useful commands
+
+Run these from the repository root:
+
+```powershell
+npm run build
+npm run lint --workspace=react-app
 ```
 
-### Remote Caching
+The API build can be run on its own:
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
+```powershell
+npm run build --workspace=http-server
 ```
 
-Without global `turbo`, use your package manager:
+## API areas
 
-```sh
-cd my-turborepo
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+- `/auth`: registration, login, verification, and OTP email
+- `/sheet`: sheets, folders, questions, custom questions, user details, and progress data
+- `/editor`: code execution and snippet management
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
-//  "build": "tsc -b && vite build",
+The backend loads its `.env` from the current working directory. Running API commands from `apps/http-server` ensures its configuration is loaded.
+# LevelupAlgo
