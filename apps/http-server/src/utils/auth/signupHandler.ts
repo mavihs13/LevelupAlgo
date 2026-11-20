@@ -3,6 +3,7 @@ import { Users } from "@repo/database/db";
 import type { registerResponseType } from "@repo/types/apiResponse/registerResponseType";
 import type { Request, Response } from "express";
 import type {registerRequestType} from '@repo/types/apiRequests/registerRequestType';
+import { seedDefaultDsaSheet } from "../sheet/seedDefaultDsaSheet.js";
 const RegisterHandler = async(req:Request, res: Response)=>{
     try{
     
@@ -10,6 +11,7 @@ const RegisterHandler = async(req:Request, res: Response)=>{
         const user = await Users.findOne({email});
 
         if( user ){
+            await seedDefaultDsaSheet(user._id);
             const response : registerResponseType = {
                 success: true,
                 redirect: "/login",
@@ -22,12 +24,13 @@ const RegisterHandler = async(req:Request, res: Response)=>{
             const hashedPass = await bcrypt.hash(password,10); // password,saltRounds
             // if successfull -> return document 
             // if fails -> throws error
-            await Users.create({
+            const newUser = await Users.create({
                 name,
                 password: hashedPass,
                 email,
                 isVerified: false
             });
+            await seedDefaultDsaSheet(newUser._id);
             const response: registerResponseType = {    
                 success: true,
                 redirect: "/login",
