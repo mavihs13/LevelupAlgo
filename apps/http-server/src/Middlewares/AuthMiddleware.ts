@@ -24,7 +24,7 @@ export default function AuthMiddleware(req:AuthRequest,res:Response,next:NextFun
         const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
         if(typeof decoded === "string"){
             console.log("decoded token is string ", decoded);
-            return res.status(200).json({
+            return res.status(401).json({
                 error: "Unauthorized",
                 redirect:"/login"
             });

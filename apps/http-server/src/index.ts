@@ -7,6 +7,7 @@ import cors from 'cors';
 import AuthMiddleware from './Middlewares/AuthMiddleware.js';
 import SheetRouter from './Routes/SheetRoutes.js';
 import EditorRouter from './Routes/EditorRouter.js';
+import RevisionRouter from './Routes/RevisionRouter.js';
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ async function start(){
        app.use('/auth',AuthRouter);
        app.use('/sheet',AuthMiddleware,SheetRouter);
        app.use('/editor',AuthMiddleware,EditorRouter);
+        app.use('/revisions',AuthMiddleware,RevisionRouter);
        
         app.listen(process.env.PORT||3000,()=>
             console.log(`http-server started on port ${process.env.PORT||3000}`

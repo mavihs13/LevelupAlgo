@@ -1,28 +1,27 @@
-import React from 'react'
+import React from "react";
 
 interface ButtonPropsType {
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  type?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
-  text: string;
-  variant?: string
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    type?: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
+    text: string;
+    variant?: string;
 }
 
-function RequestButton(props:ButtonPropsType) {
-  return (
-    <button 
-        className={`w-full 
-          ${
-            props.variant == "dark"? "bg-black text-white hover:bg-gray-800"
-            : (props.variant =="light")? "bg-blue-800 text-white hover:bg-blue-950" 
-            :"bg-black text-white hover:bg-gray-800"}
-            p-3 rounded-lg  transition font-bold  border-none`
-          } 
-        onClick={props.onClick} 
-        type={props.type}
-    >
-      {props.text}
-    </button>
-  )
+function RequestButton(props: ButtonPropsType) {
+    const variantClass =
+        props.variant === "light"
+            ? "bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-500"
+            : "bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800";
+
+    return (
+        <button
+            className={`w-full ${variantClass} text-white font-bold py-2.5 rounded-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-black/25 min-h-[44px]`}
+            onClick={props.onClick}
+            type={props.type}
+        >
+            {props.text}
+        </button>
+    );
 }
 
-export default RequestButton
+export default RequestButton;

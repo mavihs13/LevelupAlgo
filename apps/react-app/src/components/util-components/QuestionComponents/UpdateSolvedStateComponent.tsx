@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import type { basicResponseType } from "@repo/types/apiResponse/basicResponseType";
 import { questionsState } from "../../../recoilstates/sheet/currentSheetContent";
+import { addToRevision } from "../../../api/revisionApi";
 
 
 
@@ -35,7 +36,23 @@ function UpdateSolvedStateComponent() {
 
 
 
-     async function unsolvedHandler(){
+     async function addToRevisionHandler() {
+    try {
+        const res = await addToRevision({
+            questionId: ques.id,
+            originalSolvedAt: ques.solvedAt ? ques.solvedAt.toISOString() : new Date().toISOString()
+        });
+        if (res.success) {
+            toast.success("Added to Revision Tracker");
+        } else {
+            toast.info(res.message || "This question is already in your revision tracker");
+        }
+    } catch {
+        toast.error("Failed to add to revision tracker");
+    }
+  }
+
+  async function unsolvedHandler(){
 
         try {
 
@@ -143,6 +160,12 @@ function UpdateSolvedStateComponent() {
             text={ ques.done ? "Update Status" : "Confirm" }
             className="flex-1 bg-green-600 hover:bg-green-700 text-white"
             onClick={updateSolvedHandler}
+          />
+
+        <Button
+            text="Add to Revision"
+            className="flex-1 bg-blue-600 hover:bg-blue-500 text-white"
+            onClick={addToRevisionHandler}
           />
 
         {ques.done &&  <Button

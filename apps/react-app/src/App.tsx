@@ -10,6 +10,7 @@ import AuthUI from "./components/pages/AuthPage.js";
 import { useUser } from "./components/util-components/others/useUserHook.js";
 import ProblemEditorLayout from "./components/pages/OwnQuestionPage.js";
 import NotificationPage from "./components/pages/NotificationPage.js";
+import RevisionTrackerPage from "./components/pages/RevisionTrackerPage";
 
 function App() {
     useUser();
@@ -27,6 +28,7 @@ function App() {
         <Route path="editor" element={<CodeEditor/>} />
         <Route path="sheet/:id" element={<Sheet/>} />
         <Route path="notifications" element={<NotificationPage/>} />
+          <Route path="revisions" element={<RevisionTrackerPage/>} />
       </Route> 
       <Route path="/profile" element={
         <ProtectedRoute>

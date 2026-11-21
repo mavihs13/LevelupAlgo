@@ -5,7 +5,7 @@ import Execute from "../utils/editor/codeExecute.js";
 import {getSnippets} from '../utils/editor/getSnippets.js'
 import { addSnippet } from "../utils/editor/addSnippet.js";
 import editSnippet from "../utils/editor/editSnippet.js";
-import deleteSnippet from "../utils/editor/deleteSnippt.js";
+import deleteSnippet from "../utils/editor/deleteSnippet.js";
 const EditorRouter = express.Router();
 
 EditorRouter.post("/executeCode",Execute);

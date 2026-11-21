@@ -1,4 +1,5 @@
 import type { Question } from "@repo/types/apiResponse/getSheetDataResponseType";
+import { addToRevision } from "../../../api/revisionApi";
 import { Check, BookOpen, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -38,6 +39,23 @@ function QuestionItem({ ques }: { ques: Question }) {
   // });
 
   const isDone = questionMap[ques?.id]?.done;
+
+  const handleAddToRevision = async () => {
+    try {
+      const res = await addToRevision({
+        questionId: ques.id,
+        originalSolvedAt: ques.solvedAt ? ques.solvedAt.toISOString() : null,
+        legacyStatus: null
+      });
+      if (res.success) {
+        toast.success("Added to Revision Tracker");
+      } else {
+        toast.info(res.message || "This question is already in your revision tracker");
+      }
+    } catch {
+      toast.error("Failed to add to revision tracker");
+    }
+  };
 
   const handleMarkSolved = async () => {
     try {
@@ -292,6 +310,15 @@ const handleNameChange = async () => {
           >
             Notes
           </button>
+
+          {ques.done && (
+            <button
+              onClick={handleAddToRevision}
+              className="text-[12px] text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-white/10 px-3 py-0.5 rounded-md hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-colors"
+            >
+              Add to Revision
+            </button>
+          )}
         </div>
 
 
